@@ -1,151 +1,117 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>Portland Bike to Transit Map</title>
-    <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js' type='text/javascript'></script>
-    <script src='wax/ext/modestmaps.min.js' type='text/javascript'></script>
-    <script src='wax/dist/wax.mm.js' type='text/javascript'></script>
-    <link href='wax/theme/controls.css' rel='stylesheet' type='text/css' />
-  <style type='text/css'>
-    body {
-      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    }
-    p {
-      line-height: 20px;
-    }
-    a {
-      color: #ff00a7;
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-    .layerswitch {
-		list-style: none;
-		padding: 0;
-    }
-    .layerswitch li {
-		display: inline;
-    }
-    .layerswitch li a {
-		float: left;
-		display: block;
-		height: 30px;
-		width: 110px;
-		border: 1px solid #333;
-		margin-right: 3px;
-		text-align: center;
-		line-height: 30px;
-		color: #fff;
-		text-decoration: none;
-    }
-    .layerswitch li a.active {
-    border-color: #00ffcc;
-    }
-    #mymap {
-      position: absolute;
-      top: 0;
-      right: 400px;
-      left: 0;
-      height: 100%;
-    }
-    #sidebar {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      right: 0;
-      width: 359px;
-      background: #111;
-      color: #fff;
-      border-left:1px solid #000;
-      padding: 20px;
-    }
-    .source {
-      font-size: 80%;
-    }
-    .wax-tooltip {
-    right: 10px;
-    left: auto;
-    }
-  </style>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>PDX Bike to Transit Map</title>
+        <meta name="description" content="Bike + transit map viewer for the Portland, Oregon area">
+        <meta name="author" content="Mele Sax-Barnett http://www.pdxmele.com">
+        <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale = 1, maximum-scale = 1, user-scalable=no">
 
-    <!--Google Analytics-->
-    <script type="text/javascript">
+        <!--css style links-->
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0-alpha.1/jquery.mobile-1.2.0-alpha.1.min.css" />
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.css" />
+        <!--[if lte IE 8]>
+            <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.ie.css" />
+        <![endif]-->
 
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-32858620-1']);
-    _gaq.push(['_trackPageview']);
+        <!--js library links-->
+        <script type="text/javascript" src="http://cdn.leafletjs.com/leaflet-0.5/leaflet.js"></script>
+        <script type="text/javascript" src="lvector.js"></script>
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+        <script type="text/javascript" src="http://code.jquery.com/mobile/1.2.0-alpha.1/jquery.mobile-1.2.0-alpha.1.min.js"></script>
+       
+        <style>
+            #legendButton {
+                position: absolute;
+                right:120px;
+                top: 0;
+                margin-top: 3px;
+            }
+        </style>
 
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-
-  </script>
-
-</head>
-<body>
-  <div id='sidebar'>
-    <h2 style="color:#00ffcc">Portland Bike to Transit Map</h2>
-    <P style="font-size:.8em;">This handy map can display bike routes, transit stops, and transit routes <i>at the same time</i>, so you can find your own way to bike to transit stops.
-        
-    <P style="font-size:.8em;"><i>Hover over or click on stops and routes for more info.</i> If you like this, you might also like another project I'm working on, TriMet's <a href="http://ride.trimet.org">new multimodal Map Trip Planner</a>, which can plan biking and bike-to-transit trips. Visit <a href="http://pdxmele.github.com/pdxmele">my website</a> for more maps and projects.</p>
-        
-    <P style="font-size:.8em;">The original version of this site was awarded "Most Original App" in the second round of <a href="http://civicapps.org/news/civicapps-awards-congrats-round-2-winners-and-runners">Portland's CivicApps contest</a>. Thank you! And thank you also to the awesome team that works on <a href="http://www.mapbox.com/">MapBox</a> and <a href="http://mapbox.com/tilemill/">TileMill</a>, who gave me the opportunity to finally get this project up and running again by providing a great, affordable service!</p>
-
-    <p><span class='source'>Sources: <a href='http://www.openstreetmap.org/copyright'>(c) OpenStreetMap</a> (bike routes from 10/27/12, basemap styled by <a href="http://www.mapbox.com/">MapBox</a>), transit data from <a href='http://www.trimet.org'/>TriMet</a> on 9/28/12. New transit data for service changes provided as it becomes available. See any errors? Let me know! I can edit OSM or do an update: saxbarm at gmail dot com / twitter <a href="http://www.twitter.com/pdxmele">@pdxmele</a>.</p>
+        <!--Google Analytics-->
+        <script type="text/javascript">
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-32858620-1']);
+            _gaq.push(['_trackPageview']);
+            (function() {
+              var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+              ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+              var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+        </script>
+    </head>
     
-    <p></p>
-<ul class="layerswitch">
-  <li><a id="saxbarm.pdx-bike-routes" href="#">Bike routes</a></li>
-  <li><a id="saxbarm.trimet-routes,saxbarm.stops" href="#">TriMet</a></li>
-  <li><a id="saxbarm.pdx-bike-routes,saxbarm.trimet-routes,saxbarm.stops" class="active" href="#">Show All</a></li>
-</ul>
-<p></p>
+    <body>
+        <div id="map"></div>
+        <div id="legendButton">
+            <button type="button" onclick="$('#myPopup').popup('open', {positionTo: 'window'});">Legend</button> 
+        </div>
+        <div data-role="popup" id="myPopup" class="ui-content" data-overlay-theme="b" data-theme="c">
+            <img src="legend.png">
+            <a href="#" data-rel="back" data-role="button" data-theme="c" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+        </div>
+    </body>
+ 
+    <!--my script-->
+    <script type ="text/javascript">
 
-</div>
-<div id='mymap'>
-</div>
-<script type='text/javascript'>
-    // Declare variables
-    var m, mm, interaction, legend;
-    // Set initial map layer
-    var layer = 'saxbarm.trimet-routes,saxbarm.pdx-bike-routes,saxbarm.trimet-stops';
-    // Static part of the map url
-    var urlBase = 'http://a.tiles.mapbox.com/v3/examples.map-4l7djmvo,';
-    // Full map url
-    var url = urlBase + layer + '.jsonp';
-    
-  wax.tilejson(url, function(tilejson) {
-    mm = com.modestmaps;
-    m = new mm.Map('mymap',
-    new wax.mm.connector(tilejson));
-    //legend
-    legend = wax.mm.legend(m, tilejson).appendTo(m.parent);
-    //zoomer
-    wax.mm.zoomer(m, tilejson).appendTo(m.parent);
-    interaction = wax.mm.interaction(m, tilejson);    
-    // Set the initial center and zoom level
-    m.setCenterZoom(new mm.Location(45.52, -122.68), 15);
-});
+        $(document).ready(function() {
 
-  $('#sidebar ul.layerswitch a').click(function (e) {
-    e.preventDefault();
-    layer = this.id;
-    $('#sidebar ul.layerswitch a').removeClass('active');
-    $(this).addClass('active');
-    refreshMap();
-  });
+            var resizeMap = function () {
+                $('#map').css('height', ($(window).height()));
+            };
+
+            $.ajaxSetup({cache:false});
+            resizeMap();
+
+            var base = new L.TileLayer("http://a.tiles.mapbox.com/v3/saxbarm.map-nsmsx1le/{z}/{x}/{y}.png", {
+                attribution: 'Tiles by <a href="http://www.pdxmele.com" target="_blank">Mele Sax-Barnett</a>, <a href="http://www.mapbox.com" target="_blank">MapBox</a>, map data <a href="http://developer.trimet.org/" target="_blank">TriMet</a> and <a href="http://www.openstreetmap.org/copyright" target="_blank">&copy OpenStreetMap contributors.</a> <a href="https://github.com/pdxmele/PDX-bike-transit-map" target="_blank">More info about this project on GitHub</a>'
+            });
+
+            var bikes = new L.TileLayer("http://a.tiles.mapbox.com/v3/saxbarm.pdx-bike-routes/{z}/{x}/{y}.png"
+            );
+
+            var tmroutes = new L.TileLayer("http://a.tiles.mapbox.com/v3/saxbarm.trimet-routes/{z}/{x}/{y}.png"
+            );
+
+            var map = new L.Map('map', {
+                center: new L.LatLng(45.516, -122.680),
+                zoom: 15,
+                minZoom: 12,
+                maxZoom: 17,
+                layers: [base, tmroutes, bikes]
+            });
+
+            var stops = new lvector.CartoDB({
+                user: "pdxmele",
+                table: "tm_stops",
+                scaleRange: [16, 17],
+                map: map,
+                symbology: {
+                    type: "single",
+                    vectorOptions: {
+                        circleMarker: true,
+                        radius: 6,
+                        color: "#000000",
+                        opacity: 1,
+                        fillOpacity: 1,
+                        fillColor: "#FF9500",
+                        weight: 1.25
+                    }
+                },
+                popupTemplate: '<h3>{stop_name}</h3>Stop #{stop_id}<br>Frequent? {frequent}<br><a href="http://trimet.org/arrivals/tracker?locationID={stop_id}" target="_blank">TransitTracker arrivals</a>',
+                singlePopup: true
+            });
+
+            map.addControl(new L.Control.Layers({"Base map":base}, {"TriMet routes":tmroutes, "Bike routes":bikes}));
+
+            map.locate({setView: true, maxZoom: 16});
+
+            $(window).on('resize', resizeMap);
+
+        });
     
-  function refreshMap() {
-    url = urlBase + layer + '.jsonp';
-    wax.tilejson(url, function(tilejson) {
-      m.setLayerAt(0, new wax.mm.connector(tilejson));
-      interaction.remove();
-      interaction = wax.mm.interaction(m, tilejson);
-    });
-  }
-</script>
-</body>
+    </script>
+
 </html>
