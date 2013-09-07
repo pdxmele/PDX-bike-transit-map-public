@@ -1,9 +1,11 @@
 ##PDX Bike to Transit Map 
 :bike:  :bus:  :globe_with_meridians:
 
+_Now with live bus positions!_ These are indicated by the arrows. Refresh them with the refresh button, and you can turn them off if you don't like them as "TriMet vehicles" in the layer switcher. Includes delay information.
+
 This handy map can display bike routes, transit stops, and transit routes at the same time, so you can find your own way to bike to transit stops. I built it with MapBox, TileMill, CartoDB, and Leaflet (with the Leaflet Vector Layers plugin), and used OpenStreetMap and TriMet data.
 
-Zoom in to see transit stops, and click on them for more information and a link to the TriMet TransitTracker for that stop.
+Zoom in to see transit stops, and click on them for more information and a link to the TriMet TransitTracker arrival information for that stop.
 
 This is v3 of a project I started a couple of years ago--the original version was awarded "Most Original App" in the second round of Portland's CivicApps contest.
 
