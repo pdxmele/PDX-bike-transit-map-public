@@ -3,27 +3,34 @@
     <head>
         <meta charset="utf-8">
         <title>PDX Bike to Transit Map</title>
-        <meta name="description" content="Bike + transit map viewer for the Portland, Oregon area">
+        <meta name="description" content="Bike + transit map, arrival information for the Portland, Oregon area">
         <meta name="author" content="Mele Sax-Barnett http://www.pdxmele.com">
         <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale = 1, maximum-scale = 1, user-scalable=no">
 
         <!--css style links-->
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0-alpha.1/jquery.mobile-1.2.0-alpha.1.min.css" />
-        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.css" />
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
         <!--[if lte IE 8]>
-            <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.ie.css" />
+            <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.ie.css" />
         <![endif]-->
 
         <!--js library links-->
-        <script type="text/javascript" src="http://cdn.leafletjs.com/leaflet-0.5/leaflet.js"></script>
+        <script type="text/javascript" src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
         <script type="text/javascript" src="lvector.js"></script>
+        <script type ="text/javascript" src="Marker.Rotate.js"></script>
         <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
         <script type="text/javascript" src="http://code.jquery.com/mobile/1.2.0-alpha.1/jquery.mobile-1.2.0-alpha.1.min.js"></script>
        
         <style>
             #legendButton {
                 position: absolute;
-                right:120px;
+                right:130px;
+                top: 0;
+                margin-top: 3px;
+            }
+            #refreshButton {
+                position: absolute;
+                right:240px;
                 top: 0;
                 margin-top: 3px;
             }
@@ -47,6 +54,9 @@
         <div id="legendButton">
             <button type="button" onclick="$('#myPopup').popup('open', {positionTo: 'window'});">Legend</button> 
         </div>
+        <div id="refreshButton">
+            <button type="button" onclick="refreshVehicles();">Refresh</button> 
+        </div>
         <div data-role="popup" id="myPopup" class="ui-content" data-overlay-theme="b" data-theme="c">
             <img src="legend.png">
             <a href="#" data-rel="back" data-role="button" data-theme="c" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
@@ -55,6 +65,35 @@
  
     <!--my script-->
     <script type ="text/javascript">
+
+        //PLEASE don't use this, GET YOUR OWN FROM TRIMET @ http://developer.trimet.org -- it's free and instant!
+        var apikey = "F1DED9CAF869B20124944B851";
+
+        var base = new L.TileLayer("http://a.tiles.mapbox.com/v3/saxbarm.map-nsmsx1le/{z}/{x}/{y}.png", {
+            attribution: 'Tiles by <a href="http://www.pdxmele.com" target="_blank">Mele Sax-Barnett</a>, <a href="http://www.mapbox.com" target="_blank">MapBox</a>, base map data &copy <a href="http://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap contributors.</a> Route and arrival data provided by permission of <a href="http://developer.trimet.org/" target="_blank">TriMet</a>. <a href="https://github.com/pdxmele/PDX-bike-transit-map" target="_blank">More info about this project on GitHub</a>'
+        });
+
+        var bikes = new L.TileLayer("http://a.tiles.mapbox.com/v3/saxbarm.pdx-bike-routes/{z}/{x}/{y}.png"
+        );
+
+        var tmroutes = new L.TileLayer("http://a.tiles.mapbox.com/v3/saxbarm.trimet-routes/{z}/{x}/{y}.png"
+        );
+
+        //Icons
+        var lateIcon = L.icon({
+            iconUrl: 'supporting_files/images/ared.png',
+            iconSize:     [30, 30], // size of the icon
+            iconAnchor:   [15, 15], // point of the icon which will correspond to marker's location
+            popupAnchor:  [0, -5] // point from which the popup should open relative to the iconAnchor
+        });
+        var onTimeIcon = L.icon({
+            iconUrl: 'supporting_files/images/ablack.png',
+            iconSize:     [30, 30],
+            iconAnchor:   [15, 15],
+            popupAnchor:  [0, -5]
+        });
+
+        var tmvehicles = L.layerGroup([]);
 
         $(document).ready(function() {
 
@@ -65,22 +104,12 @@
             $.ajaxSetup({cache:false});
             resizeMap();
 
-            var base = new L.TileLayer("http://a.tiles.mapbox.com/v3/saxbarm.map-nsmsx1le/{z}/{x}/{y}.png", {
-                attribution: 'Tiles by <a href="http://www.pdxmele.com" target="_blank">Mele Sax-Barnett</a>, <a href="http://www.mapbox.com" target="_blank">MapBox</a>, map data <a href="http://developer.trimet.org/" target="_blank">TriMet</a> and <a href="http://www.openstreetmap.org/copyright" target="_blank">&copy OpenStreetMap contributors.</a> <a href="https://github.com/pdxmele/PDX-bike-transit-map" target="_blank">More info about this project on GitHub</a>'
-            });
-
-            var bikes = new L.TileLayer("http://a.tiles.mapbox.com/v3/saxbarm.pdx-bike-routes/{z}/{x}/{y}.png"
-            );
-
-            var tmroutes = new L.TileLayer("http://a.tiles.mapbox.com/v3/saxbarm.trimet-routes/{z}/{x}/{y}.png"
-            );
-
             var map = new L.Map('map', {
                 center: new L.LatLng(45.516, -122.680),
                 zoom: 15,
                 minZoom: 12,
                 maxZoom: 17,
-                layers: [base, tmroutes, bikes]
+                layers: [base, tmroutes, tmvehicles, bikes]
             });
 
             var stops = new lvector.CartoDB({
@@ -104,13 +133,57 @@
                 singlePopup: true
             });
 
-            map.addControl(new L.Control.Layers({"Base map":base}, {"TriMet routes":tmroutes, "Bike routes":bikes}));
+            map.addControl(new L.Control.Layers({"Base map":base}, {"TriMet vehicles":tmvehicles, "TriMet routes":tmroutes, "Bike routes":bikes}));
 
             map.locate({setView: true, maxZoom: 16});
 
             $(window).on('resize', resizeMap);
 
         });
+        
+        // Get vehicle positions
+        $.ajax({  
+            url: 'http://developer.trimet.org/beta/v2/vehicles?appID='+apikey+'&onRouteOnly=true&callback',
+            dataType: 'json',
+            success: getVehicles
+        });
+
+        function getVehicles(data, status, xhr) {
+            if (!data || data.error) {
+                alert('AJAX error: '+data.error.errorMessage);
+                return;
+            }
+
+            //Basic way, creating markers directly
+            $.each(data.resultSet.vehicle, function(index, val) {
+                var vehicle = val;
+                var last_sighted = new Date(vehicle.time);
+                var now = new Date;
+                var ago = now - last_sighted;
+                var bearing = vehicle.bearing;
+
+                L.marker([vehicle.latitude, vehicle.longitude], 
+                    {icon: (vehicle.delay > 119 ? lateIcon : onTimeIcon), iconAngle: bearing-90}).addTo(tmvehicles).bindPopup(
+                        '<h3>'+vehicle.signMessage+'</h3>' +
+                        // TODO: handle, can be undefined!
+                        'Last seen: ' + 
+                            (ago < 60000 ? Math.ceil(ago/1000) + ' sec ago' : Math.floor(ago/60000) + ' min ' + Math.ceil(ago%60000/1000) + ' sec ago') +
+                        //'<br /> Bearing: ' + vehicle.bearing + //TODO: handle, can be number or null
+                        (vehicle.delay > 119 ? '<br />Delay: ' + Math.ceil(vehicle.delay/60) +' minutes' : '')
+                        );
+            });
+        }
+
+        //Refresh vehicle positions
+        function refreshVehicles() {
+            //console.log("refreshing!!");
+            tmvehicles.clearLayers();
+            $.ajax({  
+                url: 'http://developer.trimet.org/beta/v2/vehicles?appID='+apikey+'&onRouteOnly=true&callback',
+                dataType: 'json',
+                success: getVehicles
+            });
+        }
     
     </script>
 
