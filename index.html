@@ -24,13 +24,13 @@
         <style>
             #legendButton {
                 position: absolute;
-                right:140px;
+                left:50px;
                 top: 0;
                 margin-top: 3px;
             }
             #refreshButton {
                 position: absolute;
-                right:250px;
+                left:80px;
                 top: 0;
                 margin-top: 3px;
             }
@@ -52,10 +52,10 @@
     <body>
         <div id="map"></div>
         <div id="legendButton">
-            <button type="button" onclick="$('#myPopup').popup('open', {positionTo: 'window'});">Legend</button> 
+            <button type="button" data-icon="info" data-iconpos="notext" onclick="$('#myPopup').popup('open', {positionTo: 'window'});">Legend</button> 
         </div>
         <div id="refreshButton">
-            <button type="button" onclick="refreshVehicles();">Refresh</button> 
+            <button type="button" data-icon="refresh" data-iconpos="notext" onclick="refreshVehicles();">Refresh</button>
         </div>
         <div data-role="popup" id="myPopup" class="ui-content" data-overlay-theme="b" data-theme="c">
             <img src="legend.png">
@@ -109,7 +109,7 @@
                 zoom: 15,
                 minZoom: 12,
                 maxZoom: 17,
-                layers: [base, tmroutes, tmvehicles, bikes]
+                layers: [base, tmvehicles, tmroutes, bikes]
             });
 
             var stops = new lvector.CartoDB({
