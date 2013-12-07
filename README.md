@@ -13,6 +13,6 @@ This v3 redux was also inspired/built up from my PDX bike map. If you visit its 
 
 If you like this, you might also like another project I worked on, TriMet's multimodal Map Trip Planner at http://ride.trimet.org, which can plan biking and bike-to-transit trips. Visit my website, http://pdxmele.com, for more maps and projects. 
 
-Detailed data source info: OpenStreetMap contributors (bike routes pulled from May 4, 2013 and styled by yours truly, basemap styled by MapBox), transit data from TriMet on May 27th, 2013. Transit updates for service changes are provided as new data becomes available. 
+Detailed data source info: OpenStreetMap contributors (bike routes downloaded on Sept. 7, 2013 and styled by yours truly, basemap styled by MapBox), transit data from TriMet on September 8, 2013. Transit updates for service changes are provided as new data becomes available. 
 
 *See any errors in the map or with the functionality? Please let me know by reporting an issue.*
