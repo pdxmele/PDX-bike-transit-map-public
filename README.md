@@ -16,3 +16,5 @@ If you like this, you might also like another project I worked on, TriMet's mult
 Detailed data source info: OpenStreetMap contributors (bike routes downloaded on December 7, 2013 and styled by yours truly, basemap styled by MapBox), transit data from TriMet on December 7, 2013. Transit updates for service changes are provided as new data becomes available. 
 
 *See any errors in the map or with the functionality? Please let me know by reporting an issue.*
+
+If you like this, please consider donating on Gittip: https://www.gittip.com/pdxmele/
