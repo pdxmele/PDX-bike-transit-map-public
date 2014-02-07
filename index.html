@@ -89,6 +89,12 @@
             iconAnchor:   [15, 15],
             popupAnchor:  [0, -5]
         });
+        var unknownIcon = L.icon({
+            iconUrl: 'supporting_files/images/unknown.png',
+            iconSize:     [30, 30],
+            iconAnchor:   [15, 15],
+            popupAnchor:  [0, -5]
+        });
 
         var tmvehicles = L.layerGroup([]);
 
@@ -167,7 +173,7 @@
                 }
                 else {
                     L.marker([vehicle.latitude, vehicle.longitude], 
-                    {icon: lateIcon, iconAngle: bearing-90}).addTo(tmvehicles).bindPopup(popup_text);
+                    {icon: unknownIcon, iconAngle: 0}).addTo(tmvehicles).bindPopup(popup_text);
                 }
             });
         }
