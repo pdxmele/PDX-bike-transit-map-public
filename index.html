@@ -159,13 +159,16 @@
                 var ago = now - last_sighted;
                 var bearing = vehicle.bearing;
                 var sign_message = vehicle.signMessage;
+                var popup_text = ('<h3>'+ (!sign_message ? 'Unknown Route' : sign_message ) + '</h3>' + 'Last seen: ' + (!ago ? 'Unknown' : (ago < 60000 ? Math.ceil(ago/1000) + ' sec ago' : Math.floor(ago/60000) + ' min ' + Math.ceil(ago%60000/1000) + ' sec ago')) + (vehicle.delay > 119 ? '<br />Delay: ' + Math.ceil(vehicle.delay/60) +' minutes' : ''));
 
-                L.marker([vehicle.latitude, vehicle.longitude], 
-                    {icon: (vehicle.delay > 119 ? lateIcon : onTimeIcon), iconAngle: bearing-90}).addTo(tmvehicles).bindPopup(
-                            '<h3>'+ (!sign_message ? 'Unknown Route' : sign_message ) +'</h3>' +
-                            'Last seen: ' + (!ago ? 'Unknown' : (ago < 60000 ? Math.ceil(ago/1000) + ' sec ago' : Math.floor(ago/60000) + ' min ' + Math.ceil(ago%60000/1000) + ' sec ago')) +
-                            (vehicle.delay > 119 ? '<br />Delay: ' + Math.ceil(vehicle.delay/60) +' minutes' : '')
-                        );
+                if (sign_message) {
+                    L.marker([vehicle.latitude, vehicle.longitude], 
+                    {icon: (vehicle.delay > 119 ? lateIcon : onTimeIcon), iconAngle: bearing-90}).addTo(tmvehicles).bindPopup(popup_text);
+                }
+                else {
+                    L.marker([vehicle.latitude, vehicle.longitude], 
+                    {icon: lateIcon, iconAngle: bearing-90}).addTo(tmvehicles).bindPopup(popup_text);
+                }
             });
         }
 
