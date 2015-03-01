@@ -15,7 +15,7 @@ Map {} /* transparent background */
     line-cap: round;
   }
   [zoom > 16]{::case {line-width: 14;} ::fill {line-width: 12;}}
-  [zoom = 16]{::case {line-width: 10;} ::fill {line-width: 10;}}
+  [zoom = 16]{::case {line-width: 10;} ::fill {line-width: 8;}}
   [zoom = 15]{::case {line-width: 6;} ::fill {line-width: 4;}}
   [zoom = 14]{::case {line-width: 5;} ::fill {line-width: 3;}}
   [zoom < 14]{::case {line-width: 4;} ::fill {line-width: 2;}}
@@ -76,7 +76,7 @@ Map {} /* transparent background */
   }
   ['rte_desc' = "NS Line"] {
     line-color: #9c4;
-    line-offset:-0.5;
+    line-offset: -0.5;
     [zoom < 15]{line-width: 1.5; line-offset:-1;}
     [zoom > 16]{line-width: 4; line-offset:-2;}
   }
@@ -85,9 +85,9 @@ Map {} /* transparent background */
 /* Aerial Tram */
 #feb222015_tm_routes ['type' = "AT"] {
   line-width: 2;
-  line-color:#f100ff;
-  line-join:round;
-  line-cap:round;
+  line-color: #f100ff;
+  line-join: round;
+  line-cap: round;
   [zoom < 15]{line-width: 1.5;}
   [zoom > 16]{line-width: 3;}
 }
