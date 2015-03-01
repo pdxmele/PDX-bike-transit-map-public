@@ -9,12 +9,12 @@ Zoom in to see transit stops, and click on them for more information and a link 
 
 This is v3 of a project I started a couple of years ago--the original version was awarded "Most Original App" in the second round of Portland's CivicApps contest.
 
-This v3 redux was also inspired/built up from my PDX bike map. If you visit its repo (https://github.com/pdxmele/PDX-bike-map), you can read all about how to create one of your own.
+This v3 redux was also inspired/built up from my PDX bike map. If you visit its repo (https://github.com/pdxmele/PDX-bike-map-public), you can read all about how to create one of your own.
 
 If you like this, you might also like another project I worked on, TriMet's multimodal Map Trip Planner at http://ride.trimet.org, which can plan biking and bike-to-transit trips. Visit my website, http://pdxmele.com, for more maps and projects. 
 
-Detailed data source info: OpenStreetMap contributors (bike routes downloaded on December 7, 2013 and styled by yours truly, basemap styled by MapBox), transit data from TriMet on December 7, 2013. Transit updates for service changes are provided as new data becomes available. 
+Detailed data source info: OpenStreetMap contributors (bike routes downloaded on December 7, 2013 and styled by yours truly, basemap styled by MapBox), transit data from TriMet on December 7, 2013. Transit updates for service changes are provided as new data becomes available (and I find the time). 
 
 *See any errors in the map or with the functionality? Please let me know by reporting an issue.*
 
-If you like this, please consider donating on Gittip: https://www.gittip.com/pdxmele/
+If you like this, please consider donating on Gratipay: https://gratipay.com/pdxmele/

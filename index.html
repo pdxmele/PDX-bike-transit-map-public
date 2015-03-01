@@ -11,7 +11,8 @@
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0-alpha.1/jquery.mobile-1.2.0-alpha.1.min.css" />
         <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" />
 
-        <!--js library links-->
+        <!--js links-->
+        <script src="./tokens.js"></script>
         <script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js?2"></script>
         <script type="text/javascript" src="lvector.js"></script>
         <script type ="text/javascript" src="Marker.Rotate.js"></script>
@@ -63,17 +64,14 @@
     <!--my script-->
     <script type ="text/javascript">
 
-        //PLEASE don't use this, GET YOUR OWN FROM TRIMET @ http://developer.trimet.org -- it's free and instant!
-        var apikey = "F1DED9CAF869B20124944B851";
-
-        var base = new L.TileLayer("http://a.tiles.mapbox.com/v3/saxbarm.map-nsmsx1le/{z}/{x}/{y}.png", {
+        var base = new L.TileLayer("http://a.tiles.mapbox.com/v3/saxbarm.map-nsmsx1le/{z}/{x}/{y}.png?access_token=?" + mapboxPublicToken, {
             attribution: 'Tiles by <a href="http://www.pdxmele.com" target="_blank">Mele Sax-Barnett</a>, <a href="http://www.mapbox.com" target="_blank">MapBox</a>, base map data &copy <a href="http://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap contributors.</a> Route and arrival data provided by permission of <a href="http://developer.trimet.org/" target="_blank">TriMet</a>. <a href="https://github.com/pdxmele/PDX-bike-transit-map" target="_blank">More info about this project on GitHub</a>'
         });
 
-        var bikes = new L.TileLayer("http://a.tiles.mapbox.com/v3/saxbarm.pdx-bike-routes/{z}/{x}/{y}.png"
+        var bikes = new L.TileLayer("http://a.tiles.mapbox.com/v3/saxbarm.pdx-bike-routes/{z}/{x}/{y}.png?access_token=?" + mapboxPublicToken
         );
 
-        var tmroutes = new L.TileLayer("http://a.tiles.mapbox.com/v3/saxbarm.trimet-routes/{z}/{x}/{y}.png"
+        var tmroutes = new L.TileLayer("http://a.tiles.mapbox.com/v3/saxbarm.trimet-routes/{z}/{x}/{y}.png?access_token=?" + mapboxPublicToken
         );
 
         //Icons
@@ -146,7 +144,7 @@
         
         // Get vehicle positions
         $.ajax({  
-            url: 'http://developer.trimet.org/beta/v2/vehicles?appID='+apikey+'&onRouteOnly=true&callback',
+            url: 'http://developer.trimet.org/beta/v2/vehicles?appID='+trimetApikey+'&onRouteOnly=true&callback',
             dataType: 'json',
             success: getVehicles
         });
@@ -183,7 +181,7 @@
             //console.log("refreshing!!");
             tmvehicles.clearLayers();
             $.ajax({  
-                url: 'http://developer.trimet.org/beta/v2/vehicles?appID='+apikey+'&onRouteOnly=true&callback',
+                url: 'http://developer.trimet.org/beta/v2/vehicles?appID='+trimetApikey+'&onRouteOnly=true&callback',
                 dataType: 'json',
                 success: getVehicles
             });
