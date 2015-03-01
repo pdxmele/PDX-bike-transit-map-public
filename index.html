@@ -5,7 +5,7 @@
         <title>PDX Bike to Transit Map</title>
         <meta name="description" content="Bike + transit map, arrival information for the Portland, Oregon area">
         <meta name="author" content="Mele Sax-Barnett http://www.pdxmele.com">
-        <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale = 1, maximum-scale = 1, user-scalable=no">
+        <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
 
         <!--css style links-->
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0-alpha.1/jquery.mobile-1.2.0-alpha.1.min.css" />
@@ -71,15 +71,14 @@
         var bikes = new L.TileLayer("http://a.tiles.mapbox.com/v3/saxbarm.pdx-bike-routes/{z}/{x}/{y}.png?access_token=?" + mapboxPublicToken
         );
 
-        var tmroutes = new L.TileLayer("http://a.tiles.mapbox.com/v3/saxbarm.trimet-routes/{z}/{x}/{y}.png?access_token=?" + mapboxPublicToken
+        var tmroutes = new L.TileLayer("http://a.tiles.mapbox.com/v3/saxbarm.d140b77a/{z}/{x}/{y}.png?access_token=?" + mapboxPublicToken
         );
 
-        //Icons
         var lateIcon = L.icon({
             iconUrl: 'supporting_files/images/ared.png',
-            iconSize:     [30, 30], // size of the icon
-            iconAnchor:   [15, 15], // point of the icon which will correspond to marker's location
-            popupAnchor:  [0, -5] // point from which the popup should open relative to the iconAnchor
+            iconSize:     [30, 30],
+            iconAnchor:   [15, 15], 
+            popupAnchor:  [0, -5]
         });
         var onTimeIcon = L.icon({
             iconUrl: 'supporting_files/images/ablack.png',
@@ -130,7 +129,7 @@
                         weight: 1.25
                     }
                 },
-                popupTemplate: '<h3>{stop_name}</h3>Stop #{stop_id}<br>Frequent? {frequent}<br><a href="http://trimet.org/arrivals/tracker?locationID={stop_id}" target="_blank">TransitTracker arrivals</a>',
+                popupTemplate: '<h3>{stop_name}</h3>Stop #{stop_id}<br>Frequent? {frequent}<br><a href="http://trimet.org/arrivals/tracker?locationID={stop_id}" target="_blank">Arrivals</a>',
                 singlePopup: true
             });
 
@@ -151,11 +150,11 @@
 
         function getVehicles(data, status, xhr) {
             if (!data || data.error) {
-                alert('AJAX error: '+data.error.errorMessage);
+                alert('Data retrieval error: '+data.error.errorMessage);
                 return;
             }
 
-            //Basic way, creating markers directly
+            //Creating markers directly
             $.each(data.resultSet.vehicle, function(index, val) {
                 var vehicle = val;
                 var last_sighted = new Date(vehicle.time);
