@@ -129,7 +129,7 @@
                         weight: 1.25
                     }
                 },
-                popupTemplate: '<h3>{stop_name}</h3>Stop #{stop_id}<br>Frequent? {frequent}<br><a href="http://trimet.org/arrivals/tracker?locationID={stop_id}" target="_blank">Arrivals</a>',
+                popupTemplate: '<h3>{stop_name}</h3>Stop #{stop_id}<br>Frequent? {frequent}<br><a href="http://trimet.org/arrivals/popup_tracker?locids={stop_id}" target="_blank">Arrivals</a>',
                 singlePopup: true
             });
 
@@ -137,24 +137,37 @@
 
             map.locate({setView: true, maxZoom: 16});
 
+            // Get vehicle positions
+            makeTrimetApiCall();
+
+            // Limit visibility of bus markers at low zoom levels, from example here: https://www.mapbox.com/mapbox.js/example/v1.0.0/markers-only-at-zoom-level/
+            map.on('zoomend', function() {
+                if (map.getZoom() > 13) {
+                    tmvehicles.eachLayer(function (layer) { layer.setOpacity(1); })
+                } else {
+                    tmvehicles.eachLayer(function (layer) { layer.setOpacity(0); })
+                }
+            });
+
             $(window).on('resize', resizeMap);
 
         });
-        
-        // Get vehicle positions
-        $.ajax({  
-            url: 'http://developer.trimet.org/beta/v2/vehicles?appID='+trimetApikey+'&onRouteOnly=true&callback',
-            dataType: 'json',
-            success: getVehicles
-        });
 
-        function getVehicles(data, status, xhr) {
+        function makeTrimetApiCall() {
+            $.ajax({  
+                url: 'http://developer.trimet.org/beta/v2/vehicles?appID='+trimetApikey+'&onRouteOnly=true&callback',
+                dataType: 'json',
+                success: mapVehicles
+            });
+        }
+
+        function mapVehicles(data, status, xhr) {
             if (!data || data.error) {
                 alert('Data retrieval error: '+data.error.errorMessage);
                 return;
             }
 
-            //Creating markers directly
+            // Creating markers directly
             $.each(data.resultSet.vehicle, function(index, val) {
                 var vehicle = val;
                 var last_sighted = new Date(vehicle.time);
@@ -175,15 +188,11 @@
             });
         }
 
-        //Refresh vehicle positions
+        // Refresh vehicle positions
         function refreshVehicles() {
             //console.log("refreshing!!");
             tmvehicles.clearLayers();
-            $.ajax({  
-                url: 'http://developer.trimet.org/beta/v2/vehicles?appID='+trimetApikey+'&onRouteOnly=true&callback',
-                dataType: 'json',
-                success: getVehicles
-            });
+            makeTrimetApiCall();
         }
     
     </script>
